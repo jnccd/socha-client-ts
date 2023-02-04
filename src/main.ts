@@ -4,7 +4,7 @@ import DOMParser from 'dom-parser';
 
 import { decideMove } from './logic'
 import { Point } from './point'
-import { GameState, otherPlayer } from './gamestate';
+import { GameState } from './gamestate';
 import { boardSize } from './board';
 
 let host = "127.0.0.1";
@@ -87,7 +87,7 @@ client.on('data', function(data) {
 			if (currentState.turn == 0)
 				currentState.myselfPlayer = currentState.startPlayer
 			else if (currentState.turn == 1)
-				currentState.myselfPlayer = otherPlayer(currentState.startPlayer)
+				currentState.myselfPlayer = currentState.otherPlayer(currentState.startPlayer)
 			currentState.currentPlayer = currentState.myselfPlayer
 
 			let move = decideMove(currentState)
@@ -128,7 +128,7 @@ client.on('data', function(data) {
 
 	let domStartTeam = dom.getElementsByTagName('startTeam')
 	if (domStartTeam.length > 0) {
-		currentState.startPlayer = domStartTeam[0].innerHTML;
+		currentState.startPlayer = currentState.playerFromString(domStartTeam[0].innerHTML);
 	}
 
 	let domBoard = dom.getElementsByTagName('board')

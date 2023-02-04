@@ -1,4 +1,5 @@
 import Enumerable from "linq";
+import { Player } from "./player";
 import { Point } from "./point"
 
 export const boardSize = 8
@@ -52,12 +53,12 @@ export class Board {
         return rs
     }
 
-    getAllFieldsFromPlayer(player: string) {
+    getAllFieldsFromPlayer(player: Player) {
         let re = []
 
         for (let x = 0; x < boardSize; x++)
             for (let y = 0; y < boardSize; y++)
-                if (this.fields[x][y] === player) {
+                if (this.fields[x][y] === player.identifier) {
                     re.push(new Point(x, y))
                 }
 

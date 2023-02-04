@@ -1,24 +1,19 @@
 import { Board, boardSize } from "./board"
 import { Cloneable } from "./deepcopy"
 import { Move } from "./move"
+import { Player } from "./player"
 import { Point } from "./point"
-
-export function otherPlayer(player: string) {
-    if (player == "ONE")
-        return "TWO"
-    else if (player == "TWO")
-        return "ONE"
-    else
-        return undefined
-}
 
 export class GameState {
     board: Board = new Board()
     turn: number = 0
 
-    currentPlayer = ""
-    myselfPlayer = ""
-    startPlayer = ""
+    currentPlayer: Player = null
+    myselfPlayer: Player = null
+    startPlayer: Player = null
+
+    onePlayer: Player = new Player("ONE", 1, 0)
+    twoPlayer: Player = new Player("TWO", 2, 0)
 
     constructor() {
         
@@ -27,12 +22,12 @@ export class GameState {
     perform(m: Move): GameState {
         let re = Cloneable.deepCopy(this)
         
-        re.board.fields[m.to.x][m.to.y] = re.currentPlayer
+        re.board.fields[m.to.x][m.to.y] = re.currentPlayer.identifier
 
         if (m.from != null) {
             re.board.fields[m.from.x][m.from.y] = "0"
 
-            let other = otherPlayer(re.currentPlayer)
+            let other = this.otherPlayer(re.currentPlayer)
             if (this.canMove(other))
                 re.currentPlayer = other
         }
@@ -42,7 +37,7 @@ export class GameState {
         return re
     }
 
-    canMove(player: string) {
+    canMove(player: Player) {
         let can = false
 
         this.board.getAllFieldsFromPlayer(player).forEach((f) => {
@@ -83,5 +78,23 @@ export class GameState {
         }
 
         return re
+    }
+
+    playerFromString(str: string) {
+        if (str == "ONE")
+            return this.onePlayer
+        else if (str == "TWO")
+            return this.twoPlayer
+        else
+            return undefined
+    }
+
+    otherPlayer(player: Player) {
+        if (player.identifier == "ONE")
+            return this.twoPlayer
+        else if (player.identifier == "TWO")
+            return this.onePlayer
+        else
+            return undefined
     }
 }
