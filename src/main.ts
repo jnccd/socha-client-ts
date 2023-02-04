@@ -5,6 +5,7 @@ import DOMParser from 'dom-parser';
 import { decideMove } from './logic'
 import { Point } from './point'
 import { GameState } from './gamestate';
+import { boardSize } from './board';
 
 let host = "127.0.0.1";
 let port = 13050;
@@ -125,11 +126,9 @@ client.on('data', function(data) {
 		let domFields = dom.getElementsByTagName('field').map(function(x){ return x.textContent })
 
 		// Fill board with field data
-		currentState.board = new Array(currentState.boardSize);
-		for(var i = 0; i < currentState.board.length; i++){
-			currentState.board[i] = new Array(currentState.boardSize);
-			for(var j = 0; j < currentState.board.length; j++){
-				currentState.board[i][j] = domFields[j*currentState.boardSize+i];
+		for(var i = 0; i < currentState.board.fields.length; i++){
+			for(var j = 0; j < currentState.board.fields.length; j++){
+				currentState.board.fields[i][j] = domFields[j*boardSize+i];
 			}
 		}
 	}

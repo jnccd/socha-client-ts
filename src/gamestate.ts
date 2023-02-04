@@ -1,10 +1,8 @@
+import { Board, boardSize } from "./board"
 import { Point } from "./point"
 
-export type Board = string[][]
-
 export class GameState {
-    boardSize = 8
-    board: Board = [[]]
+    board: Board = new Board()
     turn: number = 0
 
     constructor() {
@@ -20,23 +18,23 @@ export class GameState {
         console.log(this.turn + ": " + currentPlayer)
         if (this.turn < 8) {
             console.log(this.board)
-            for (var x = 0; x < this.boardSize; x++)
-                for (var y = 0; y < this.boardSize; y++) {
-            const curField = Number(this.board[x][y])
+            for (var x = 0; x < boardSize; x++)
+                for (var y = 0; y < boardSize; y++) {
+            const curField = Number(this.board.fields[x][y])
                     if (Number.isInteger(curField) && curField == 1){
                         re.push([null, new Point(x, y)])
                     }
                 }
         } else {
-            for (var x = 0; x < this.boardSize; x++)
-                for (var y = 0; y < this.boardSize; y++)
-                    if (this.board[x][y] == currentPlayer) {
+            for (var x = 0; x < boardSize; x++)
+                for (var y = 0; y < boardSize; y++)
+                    if (this.board.get(x,y) == currentPlayer) {
 
                         for (var dir = 0; dir < 6; dir++) {
                             const curPos = new Point(x, y)
                             curPos.addInP(this.getDirectionDisplacement(dir, curPos))
-                            while (curPos.x >= 0 && curPos.y >= 0 && curPos.x < 8 && curPos.y < 8 && Number.isInteger(Number(this.board[curPos.x][curPos.y])) && Number(this.board[curPos.x][curPos.y]) != 0){
-                                console.log(x + "|" + y + " " + dir + ": " + curPos + ", " + Number(this.board[curPos.x][curPos.y]) + ", " + this.board[curPos.x][curPos.y])
+                            while (this.board.isInBoundsP(curPos) && Number.isInteger(Number(this.board.get(curPos.x,curPos.y))) && Number(this.board.get(curPos.x,curPos.y)) != 0){
+                                console.log(x + "|" + y + " " + dir + ": " + curPos + ", " + Number(this.board.get(curPos.x,curPos.y)) + ", " + this.board.get(curPos.x,curPos.y))
 
                                 re.push([new Point(x, y), new Point(curPos.x, curPos.y)])
                                 curPos.addInP(this.getDirectionDisplacement(dir, curPos))
