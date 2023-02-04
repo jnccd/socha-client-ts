@@ -1,4 +1,20 @@
 {
+  "name": "socha",
+  "description": "Provides a client template for the software challenge 2023",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Sorry, there are no tests, but they all succeeded\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jnccd/socha-client-ts.git"
+  },
+  "keywords": ["socha", "software-challenge", "hey-danke-für-den-fisch", "typescript"],
+  "author": "dobiko",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/jnccd/socha-client-ts/issues"
+  },
   "dependencies": {
     "@types/dom-parser": "^0.1.1",
     "@types/linq": "^2.2.33",
