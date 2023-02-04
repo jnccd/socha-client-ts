@@ -1,6 +1,6 @@
-import { Point, getPossibleMoves } from './main.js'
+import { Board, Point, getPossibleMoves } from './main.js'
 
-export function decideMove(board, turn, currentPlayer) {
+export function decideMove(board: Board, turn: number, currentPlayer: string) {
     let moves = getPossibleMoves(turn, board)
     return moves[Math.floor(Math.random() * moves.length)]
 }

@@ -3,30 +3,190 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getPossibleMoves = exports.Point = void 0;
+const net_1 = require("net");
 const linq_1 = __importDefault(require("linq"));
 const dom_parser_1 = __importDefault(require("dom-parser"));
-function welcomePerson(person) {
-    console.log(`Hewwo ${person.firstName} ${person.lastName}`);
-    return `Hewwo ${person.firstName} ${person.lastName}`;
+const logic_js_1 = require("./logic.js");
+let host = "127.0.0.1";
+let port = 13050;
+let reservation = "";
+let strategy = null;
+let logNetwork = true;
+let moveProvider = null;
+// State
+const boardSize = 8;
+let board = [[]];
+let turn = 0;
+let roomId = "";
+// --- Arguments ---
+let lastArg = "";
+linq_1.default.from(process.argv).skip(2).forEach(x => {
+    if (x == "--help") {
+        console.log(`Usage: start.sh [options]
+-h, --host:
+	The IP address of the host to connect to (default: {host}).
+-p, --port:
+	The port used for the connection (default: {port}).
+-r, --reservation:
+	The reservation code to join a prepared game.
+-s, --strategy:
+	The strategy used for the game.
+--help:
+	Print this help message.`);
+        process.exit(1);
+    }
+    if (lastArg == "-h" || lastArg == "--host")
+        host = x;
+    else if (lastArg == "-p" || lastArg == "--port")
+        port = parseInt(x);
+    else if (lastArg == "-r" || lastArg == "--reservation")
+        reservation = x;
+    else if (lastArg == "-s" || lastArg == "--strategy")
+        strategy = x;
+    lastArg = x;
+});
+// --- Communication ---
+var client = new net_1.Socket();
+client.connect(port, host, function () {
+    console.log('Connected');
+    if (reservation == null) {
+        client.write(`<protocol><join gameType=\"swc_2023_penguins\" />`);
+    }
+    else {
+        client.write(`<protocol><joinPrepared reservationCode=\"${reservation}\" />`);
+    }
+});
+var responseData = "";
+client.on('data', function (data) {
+    responseData += data;
+    if (!responseData.includes("</room>") && !responseData.includes("</protocol>")) {
+        return;
+    }
+    if (logNetwork)
+        console.log('Received: ' + responseData);
+    if (responseData.includes("</protocol>")) {
+        client.destroy();
+        process.exit(1);
+    }
+    const parser = new dom_parser_1.default();
+    const dom = parser.parseFromString(responseData);
+    // Move Request handling
+    let domData = dom.getElementsByTagName('data');
+    if (domData != null && domData.length > 0) {
+        if (domData.at(0).getAttribute("class") == "moveRequest") {
+            let move = (0, logic_js_1.decideMove)(board, turn, turn % 2 == 0 ? "ONE" : "TWO");
+            console.log("Chose move: ");
+            console.log(move);
+            console.log("Converting move coordinates to hex coordinates...");
+            if (move[0] == null) {
+                let hexTo = move[1].arrayToHexCoords();
+                client.write(`<room roomId="${roomId}">` +
+                    `<data class="move\">` +
+                    `<to x = "${hexTo.x}\" y="${hexTo.y}"/>\n` +
+                    `</data>` +
+                    `</room>`);
+            }
+            else {
+                let hexFrom = move[0].arrayToHexCoords();
+                let hexTo = move[1].arrayToHexCoords();
+                client.write(`<room roomId="${roomId}">` +
+                    `<data class="move\">` +
+                    `<from x="${hexFrom.x}" y="${hexFrom.y}"/>` +
+                    `<to x = "${hexTo.x}\" y="${hexTo.y}"/>\n` +
+                    `</data>` +
+                    `</room>`);
+            }
+        }
+    }
+    // --- Parse the rest of xml input ---
+    let domStates = dom.getElementsByTagName('state');
+    if (domStates.length > 0) {
+        turn = Number(domStates.at(0).getAttribute("turn"));
+    }
+    let domJoins = dom.getElementsByTagName('joined');
+    if (domJoins.length > 0) {
+        roomId = domJoins.at(0).getAttribute("roomId");
+    }
+    let domBoard = dom.getElementsByTagName('board');
+    if (domBoard.length > 0) {
+        let domFields = dom.getElementsByTagName('field').map(function (x) { return x.textContent; });
+        // Fill board with field data
+        board = new Array(boardSize);
+        for (var i = 0; i < board.length; i++) {
+            board[i] = new Array(boardSize);
+            for (var j = 0; j < board.length; j++) {
+                board[i][j] = domFields[j * boardSize + i];
+            }
+        }
+    }
+    responseData = "";
+});
+client.on('close', function () {
+    console.log('Connection closed');
+    client.destroy();
+    process.exit(1);
+});
+// --- Game Logic ---
+class Point {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    addInP(p) {
+        this.x = p.x + this.x;
+        this.y = p.y + this.y;
+    }
+    add(p) {
+        return new Point(p.x + this.x, p.y + this.y);
+    }
+    arrayToHexCoords() {
+        return new Point(this.x * 2 + (this.y % 2 == 1 ? 1 : 0), this.y);
+    }
+    hexToArrayCoords() {
+        return new Point(this.x / 2 - (this.y % 2 == 1 ? 1 : 0), this.y);
+    }
 }
-const james = {
-    firstName: "<uwu>",
-    lastName: "owosen"
-};
-welcomePerson(james);
-console.log(linq_1.default.range(0, 50).where((i) => i % 2 == 1).select((i) => i * 69).toArray());
-const parser = new dom_parser_1.default();
-const dom = parser.parseFromString(`<li class="ml-0 py-1 d-flex">
-<div class="col-8 css-truncate css-truncate-target lh-condensed width-fit flex-auto min-width-0">
-  <a data-hovercard-type="repository" data-hovercard-url="/jnccd/socha-client-js/hovercard" data-hydro-click="{&quot;event_type&quot;:&quot;user_profile.click&quot;,&quot;payload&quot;:{&quot;profile_user_id&quot;:19777592,&quot;target&quot;:&quot;TIMELINE_REPO_LINK&quot;,&quot;user_id&quot;:19777592,&quot;originating_url&quot;:&quot;https://github.com/jnccd&quot;}}" data-hydro-click-hmac="6befd676633b1f7125ef9383886d0d68c5c20870b9adb2a34f789768a806d959" href="/jnccd/socha-client-js">jnccd/socha-client-js</a>
-  <a class="f6 Link--muted ml-lg-1 mt-1 mt-lg-0 d-block d-lg-inline" data-hydro-click="{&quot;event_type&quot;:&quot;user_profile.click&quot;,&quot;payload&quot;:{&quot;profile_user_id&quot;:19777592,&quot;target&quot;:&quot;TIMELINE_COMMIT_RANGE&quot;,&quot;user_id&quot;:19777592,&quot;originating_url&quot;:&quot;https://github.com/jnccd&quot;}}" data-hydro-click-hmac="144c58658712cbcdf27b0f4efca89891efbf7899002181b37eec56f6982b2191" href="/jnccd/socha-client-js/commits?author=jnccd&amp;since=2022-12-31&amp;until=2023-01-28">
-    15 commits
-</a>    </div>
-
-<div class="col-3 flex-shrink-0">
-  <div class="Progress mt-1 tooltipped tooltipped-n color-bg-default" aria-label="40% of commits in January were made to jnccd/socha-client-js ">
-    <span class="Progress-item rounded-2" style="width: 40%;background-color: #40c463"></span>
-  </div>
-</div>
-</li>`);
-console.log(dom.getElementsByTagName('div'));
+exports.Point = Point;
+// returns all possible moves, requires turn number and 2D array board
+function getPossibleMoves(turn, board) {
+    let re = [];
+    let currentPlayer = turn % 2 == 0 ? "ONE" : "TWO";
+    let otherPlayer = turn % 2 == 1 ? "ONE" : "TWO";
+    console.log(turn);
+    if (turn < 8) {
+        console.log(board);
+        for (var x = 0; x < boardSize; x++)
+            for (var y = 0; y < boardSize; y++) {
+                const curField = Number(board[x][y]);
+                if (Number.isInteger(curField) && curField == 1) {
+                    re.push([null, new Point(x, y)]);
+                }
+            }
+    }
+    else {
+        for (var x = 0; x < boardSize; x++)
+            for (var y = 0; y < boardSize; y++)
+                if (board[x][y] == currentPlayer) {
+                    for (var dir = 0; dir < 6; dir++) {
+                        const curPos = new Point(x, y);
+                        const curField = Number(board[curPos.x][curPos.y]);
+                        curPos.addInP(getDirectionDisplacement(dir, curPos));
+                        while (curPos.x >= 0 && curPos.y >= 0 && curPos.x < 8 && curPos.y < 8 && Number.isInteger(curField) && curField != 0) {
+                            re.push([new Point(x, y), new Point(curPos.x, curPos.y)]);
+                            curPos.addInP(getDirectionDisplacement(dir, curPos));
+                        }
+                    }
+                }
+    }
+    return re;
+}
+exports.getPossibleMoves = getPossibleMoves;
+function getDirectionDisplacement(dir, pos) {
+    if (pos.y % 2 == 0) {
+        return [new Point(-1, -1), new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 1), new Point(-1, 0)][dir];
+    }
+    else {
+        return [new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 0)][dir];
+    }
+}

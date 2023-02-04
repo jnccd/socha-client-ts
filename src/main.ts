@@ -12,10 +12,12 @@ let logNetwork = true;
 
 let moveProvider = null;
 
+export type Board = string[][]
+
 // State
 const boardSize = 8
-let board = [[]];
-let turn = 0
+let board: Board = [[]];
+let turn: number = 0
 let roomId = ""
 
 // --- Arguments ---
@@ -114,7 +116,7 @@ client.on('data', function(data) {
 	// --- Parse the rest of xml input ---
 	let domStates = dom.getElementsByTagName('state')
 	if (domStates.length > 0) {
-		turn = domStates.at(0).getAttribute("turn")
+		turn = Number(domStates.at(0).getAttribute("turn"))
 	}
 
 	let domJoins = dom.getElementsByTagName('joined')
@@ -128,11 +130,11 @@ client.on('data', function(data) {
 		let domFields = dom.getElementsByTagName('field').map(function(x){ return x.textContent })
 
 		// Fill board with field data
-		board = new Array(boardSize)
+		board = new Array(boardSize);
 		for(var i = 0; i < board.length; i++){
-			board[i] = new Array(boardSize)
+			board[i] = new Array(boardSize);
 			for(var j = 0; j < board.length; j++){
-				board[i][j] = domFields[j*boardSize+i]
+				board[i][j] = domFields[j*boardSize+i];
 			}
 		}
 	}
@@ -149,16 +151,19 @@ client.on('close', function() {
 
 // --- Game Logic ---
 export class Point {
-    constructor(x,y) {
+    x: number;
+    y: number;
+
+    constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
 	}
 
-	addInP(p) {
+	addInP(p: Point) {
 		this.x = p.x + this.x
 		this.y = p.y + this.y
 	}
-	add(p) {
+	add(p: Point) {
 		return new Point(p.x + this.x, p.y + this.y)
 	}
 
@@ -171,7 +176,7 @@ export class Point {
 }
 
 // returns all possible moves, requires turn number and 2D array board
-export function getPossibleMoves(turn, board) {
+export function getPossibleMoves(turn: number, board: Board) {
 	let re = []
 	let currentPlayer = turn % 2 == 0 ? "ONE" : "TWO"
 	let otherPlayer = turn % 2 == 1 ? "ONE" : "TWO"
@@ -181,7 +186,8 @@ export function getPossibleMoves(turn, board) {
 		console.log(board)
 		for (var x = 0; x < boardSize; x++)
 			for (var y = 0; y < boardSize; y++) {
-				if (Number.isInteger(board[x][y]-0) && board[x][y] == 1){
+        const curField = Number(board[x][y])
+				if (Number.isInteger(curField) && curField == 1){
 					re.push([null, new Point(x, y)])
 				}
 			}
@@ -191,9 +197,10 @@ export function getPossibleMoves(turn, board) {
 				if (board[x][y] == currentPlayer) {
 
 					for (var dir = 0; dir < 6; dir++) {
-						let curPos = new Point(x, y)
+						const curPos = new Point(x, y)
+            const curField = Number(board[curPos.x][curPos.y])
 						curPos.addInP(getDirectionDisplacement(dir, curPos))
-						while (curPos.x >= 0 && curPos.y >= 0 && curPos.x < 8 && curPos.y < 8 && Number.isInteger(board[curPos.x][curPos.y]-0) && board[curPos.x][curPos.y] != 0){
+						while (curPos.x >= 0 && curPos.y >= 0 && curPos.x < 8 && curPos.y < 8 && Number.isInteger(curField) && curField != 0){
 							re.push([new Point(x, y), new Point(curPos.x, curPos.y)])
 							curPos.addInP(getDirectionDisplacement(dir, curPos))
 						}
@@ -205,7 +212,7 @@ export function getPossibleMoves(turn, board) {
 	return re
 }
 
-function getDirectionDisplacement(dir, pos) {
+function getDirectionDisplacement(dir: number, pos: Point) {
 	if (pos.y % 2 == 0) {
 		return [ new Point(-1, -1), new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) ][dir]
 	} else {
