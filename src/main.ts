@@ -48,7 +48,7 @@ Enumerable.from(process.argv).skip(2).forEach(x => {
 });
 
 // --- Communication ---
-var client = new Socket();
+let client = new Socket();
 client.connect(port, host, function() {
 	console.log('Connected');
 
@@ -60,7 +60,7 @@ client.connect(port, host, function() {
 	
 });
 
-var responseData = "";
+let responseData = "";
 client.on('data', function(data) {
 	responseData += data
 	if (!responseData.includes("</room>") && !responseData.includes("</protocol>")) {
@@ -126,8 +126,8 @@ client.on('data', function(data) {
 		let domFields = dom.getElementsByTagName('field').map(function(x){ return x.textContent })
 
 		// Fill board with field data
-		for(var i = 0; i < currentState.board.fields.length; i++){
-			for(var j = 0; j < currentState.board.fields.length; j++){
+		for(let i = 0; i < currentState.board.fields.length; i++){
+			for(let j = 0; j < currentState.board.fields.length; j++){
 				currentState.board.fields[i][j] = domFields[j*boardSize+i];
 			}
 		}
