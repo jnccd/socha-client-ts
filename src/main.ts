@@ -1,7 +1,7 @@
 import { Socket } from 'net';
 import Enumerable from 'linq';
 import DOMParser from 'dom-parser';
-import { decideMove } from './logic.js'
+import { decideMove } from './logic'
 
 let host = "127.0.0.1";
 let port = 13050;
@@ -181,7 +181,7 @@ export function getPossibleMoves(turn: number, board: Board) {
 	let currentPlayer = turn % 2 == 0 ? "ONE" : "TWO"
 	let otherPlayer = turn % 2 == 1 ? "ONE" : "TWO"
 
-	console.log(turn)
+	console.log(turn + ": " + currentPlayer)
 	if (turn < 8) {
 		console.log(board)
 		for (var x = 0; x < boardSize; x++)
@@ -198,9 +198,10 @@ export function getPossibleMoves(turn: number, board: Board) {
 
 					for (var dir = 0; dir < 6; dir++) {
 						const curPos = new Point(x, y)
-            const curField = Number(board[curPos.x][curPos.y])
 						curPos.addInP(getDirectionDisplacement(dir, curPos))
-						while (curPos.x >= 0 && curPos.y >= 0 && curPos.x < 8 && curPos.y < 8 && Number.isInteger(curField) && curField != 0){
+						while (curPos.x >= 0 && curPos.y >= 0 && curPos.x < 8 && curPos.y < 8 && Number.isInteger(Number(board[curPos.x][curPos.y])) && Number(board[curPos.x][curPos.y]) != 0){
+							console.log(x + "|" + y + " " + dir + ": " + curPos + ", " + Number(board[curPos.x][curPos.y]) + ", " + board[curPos.x][curPos.y])
+
 							re.push([new Point(x, y), new Point(curPos.x, curPos.y)])
 							curPos.addInP(getDirectionDisplacement(dir, curPos))
 						}
