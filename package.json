@@ -2,8 +2,13 @@
   "name": "socha",
   "description": "Provides a client template for the software challenge 2023",
   "version": "1.0.0",
+  "main": "output/logic.js",
+  "files": [
+    "output"
+  ],
   "scripts": {
-    "test": "echo \"Sorry, there are no tests, but they all succeeded\" && exit 0"
+    "test": "echo \"Sorry, there are no tests, but they all succeeded\" && exit 0",
+    "prepublish": "tsc"
   },
   "repository": {
     "type": "git",
