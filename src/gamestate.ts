@@ -4,6 +4,9 @@ import { Point } from "./point"
 export class GameState {
     board: Board = new Board()
     turn: number = 0
+    currentPlayer = ""
+    myselfPlayer = ""
+    startPlayer = ""
 
     constructor() {
 
@@ -30,7 +33,7 @@ export class GameState {
 
             cpFields.forEach((playerField) => {
                 for (let dir = 0; dir < 6; dir++) {
-                    
+
                     let curPos = new Point(playerField.x, playerField.y)
                     curPos.addInP(this.getDirectionDisplacement(dir, curPos))
 

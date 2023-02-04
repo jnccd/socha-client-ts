@@ -120,6 +120,11 @@ client.on('data', function(data) {
 		roomId = domJoins.at(0).getAttribute("roomId")
 	}
 
+	let domStartTeam = dom.getElementsByTagName('startTeam')
+	if (domStartTeam.length > 0) {
+		currentState.startPlayer = domStartTeam[0].innerHTML;
+	}
+
 	let domBoard = dom.getElementsByTagName('board')
 	if (domBoard.length > 0) {
 		
