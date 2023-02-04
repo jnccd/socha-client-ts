@@ -1,4 +1,5 @@
 import { Board, boardSize } from "./board"
+import { Cloneable } from "./deepcopy"
 import { Point } from "./point"
 
 export function otherPlayer(player: string) {
@@ -10,7 +11,7 @@ export function otherPlayer(player: string) {
         return undefined
 }
 
-export class GameState {
+export class GameState extends Cloneable {
     board: Board = new Board()
     turn: number = 0
     currentPlayer = ""
@@ -18,7 +19,7 @@ export class GameState {
     startPlayer = ""
 
     constructor() {
-
+        super()
     }
 
     // returns all possible moves, requires turn number and 2D array board
