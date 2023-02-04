@@ -25,6 +25,17 @@ export class GameState {
     }
 
 
+    canMove(player: string) {
+        let can = false
+
+        this.board.getAllFieldsFromPlayer(player).forEach((f) => {
+            let ns = this.board.getNeighborFields(f)
+            can &&= ns.some((x) => this.board.isFreeP(x))
+        })
+
+        return can
+    }
+
     // returns all possible moves
     getPossibleMoves() {
         let re: Move[] = []
@@ -44,24 +55,16 @@ export class GameState {
                 for (let dir = 0; dir < 6; dir++) {
 
                     let curPos = new Point(playerField.x, playerField.y)
-                    curPos.addInP(this.getDirectionDisplacement(dir, curPos))
+                    curPos.addInP(Board.getDirectionDisplacement(dir, curPos))
 
                     while (this.board.isInBoundsP(curPos) && this.board.isFreeP(curPos)){
                         re.push(new Move(new Point(playerField.x, playerField.y), new Point(curPos.x, curPos.y)))
-                        curPos.addInP(this.getDirectionDisplacement(dir, curPos))
+                        curPos.addInP(Board.getDirectionDisplacement(dir, curPos))
                     }
                 }
             });
         }
 
         return re
-    }
-
-    getDirectionDisplacement(dir: number, pos: Point) {
-        if (pos.y % 2 == 0) {
-            return [ new Point(-1, -1), new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) ][dir]
-        } else {
-            return [ new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 0) ][dir]
-        }
     }
 }
