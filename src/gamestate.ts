@@ -22,13 +22,13 @@ export class GameState extends Cloneable {
         super()
     }
 
-    // returns all possible moves, requires turn number and 2D array board
+
+
+    // returns all possible moves
     getPossibleMoves() {
         let re = []
 
-        //console.log(this.turn + ": " + currentPlayer)
         if (this.turn < 8) {
-            //console.log(this.board)
             for (let x = 0; x < boardSize; x++)
                 for (let y = 0; y < boardSize; y++) {
                     const curField = Number(this.board.fields[x][y])
@@ -46,8 +46,6 @@ export class GameState extends Cloneable {
                     curPos.addInP(this.getDirectionDisplacement(dir, curPos))
 
                     while (this.board.isInBoundsP(curPos) && this.board.isFreeP(curPos)){
-                        //console.log(playerField.x + "|" + playerField.y + " " + dir + ": " + curPos + ", " + Number(this.board.get(curPos.x,curPos.y)) + ", " + this.board.get(curPos.x,curPos.y))
-
                         re.push([new Point(playerField.x, playerField.y), new Point(curPos.x, curPos.y)])
                         curPos.addInP(this.getDirectionDisplacement(dir, curPos))
                     }
