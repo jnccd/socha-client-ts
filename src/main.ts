@@ -4,23 +4,16 @@ import DOMParser from 'dom-parser';
 
 import { decideMove } from './logic'
 import { Point } from './point'
+import { GameState } from './gamestate';
 
 let host = "127.0.0.1";
 let port = 13050;
 let reservation: string | null = null;
 let strategy = null;
+let roomId = ""
+let currentState: GameState = new GameState()
 
 let logNetwork = true;
-
-let moveProvider = null;
-
-export type Board = string[][]
-
-// State
-const boardSize = 8
-let board: Board = [[]];
-let turn: number = 0
-let roomId = ""
 
 // --- Arguments ---
 let lastArg = "";
@@ -90,7 +83,7 @@ client.on('data', function(data) {
 	if (domData != null && domData.length > 0) {
 		if (domData.at(0).getAttribute("class") == "moveRequest") {
 
-			let move = decideMove(board, turn, turn % 2 == 0 ? "ONE" : "TWO")
+			let move = decideMove(currentState)
 
 			console.log("Chose move: ")
 			console.log(move)
@@ -118,7 +111,7 @@ client.on('data', function(data) {
 	// --- Parse the rest of xml input ---
 	let domStates = dom.getElementsByTagName('state')
 	if (domStates.length > 0) {
-		turn = Number(domStates.at(0).getAttribute("turn"))
+		currentState.turn = Number(domStates.at(0).getAttribute("turn"))
 	}
 
 	let domJoins = dom.getElementsByTagName('joined')
@@ -132,11 +125,11 @@ client.on('data', function(data) {
 		let domFields = dom.getElementsByTagName('field').map(function(x){ return x.textContent })
 
 		// Fill board with field data
-		board = new Array(boardSize);
-		for(var i = 0; i < board.length; i++){
-			board[i] = new Array(boardSize);
-			for(var j = 0; j < board.length; j++){
-				board[i][j] = domFields[j*boardSize+i];
+		currentState.board = new Array(currentState.boardSize);
+		for(var i = 0; i < currentState.board.length; i++){
+			currentState.board[i] = new Array(currentState.boardSize);
+			for(var j = 0; j < currentState.board.length; j++){
+				currentState.board[i][j] = domFields[j*currentState.boardSize+i];
 			}
 		}
 	}
@@ -150,52 +143,3 @@ client.on('close', function() {
 	client.destroy();
 	process.exit(1);
 });
-
-// --- Game Logic ---
-
-
-// returns all possible moves, requires turn number and 2D array board
-export function getPossibleMoves(turn: number, board: Board) {
-	let re = []
-	let currentPlayer = turn % 2 == 0 ? "ONE" : "TWO"
-	let otherPlayer = turn % 2 == 1 ? "ONE" : "TWO"
-
-	console.log(turn + ": " + currentPlayer)
-	if (turn < 8) {
-		console.log(board)
-		for (var x = 0; x < boardSize; x++)
-			for (var y = 0; y < boardSize; y++) {
-        const curField = Number(board[x][y])
-				if (Number.isInteger(curField) && curField == 1){
-					re.push([null, new Point(x, y)])
-				}
-			}
-	} else {
-		for (var x = 0; x < boardSize; x++)
-			for (var y = 0; y < boardSize; y++)
-				if (board[x][y] == currentPlayer) {
-
-					for (var dir = 0; dir < 6; dir++) {
-						const curPos = new Point(x, y)
-						curPos.addInP(getDirectionDisplacement(dir, curPos))
-						while (curPos.x >= 0 && curPos.y >= 0 && curPos.x < 8 && curPos.y < 8 && Number.isInteger(Number(board[curPos.x][curPos.y])) && Number(board[curPos.x][curPos.y]) != 0){
-							console.log(x + "|" + y + " " + dir + ": " + curPos + ", " + Number(board[curPos.x][curPos.y]) + ", " + board[curPos.x][curPos.y])
-
-							re.push([new Point(x, y), new Point(curPos.x, curPos.y)])
-							curPos.addInP(getDirectionDisplacement(dir, curPos))
-						}
-					}
-
-				}
-	}
-
-	return re
-}
-
-function getDirectionDisplacement(dir: number, pos: Point) {
-	if (pos.y % 2 == 0) {
-		return [ new Point(-1, -1), new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) ][dir]
-	} else {
-		return [ new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 0) ][dir]
-	}
-}

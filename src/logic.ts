@@ -1,6 +1,6 @@
-import { Board, getPossibleMoves } from './main.js'
+import { GameState } from "./gamestate"
 
-export function decideMove(board: Board, turn: number, currentPlayer: string) {
-    let moves = getPossibleMoves(turn, board)
+export function decideMove(currentState: GameState) {
+    let moves = currentState.getPossibleMoves()
     return moves[Math.floor(Math.random() * moves.length)]
 }
