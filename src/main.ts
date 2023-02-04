@@ -95,16 +95,16 @@ client.on('data', function(data) {
 			console.log("Chose move: ")
 			console.log(move)
 			console.log("Converting move coordinates to hex coordinates...")
-			if (move[0] == null) {
-				let hexTo = move[1].arrayToHexCoords()
+			if (move.from == null) {
+				let hexTo = move.to.arrayToHexCoords()
 				client.write(`<room roomId="${roomId}">` +
 								`<data class="move\">` +
 									`<to x = "${hexTo.x}\" y="${hexTo.y}"/>\n` +
 								`</data>` +
 							`</room>`)
 			} else {
-				let hexFrom = move[0].arrayToHexCoords()
-				let hexTo = move[1].arrayToHexCoords()
+				let hexFrom = move.from.arrayToHexCoords()
+				let hexTo = move.to.arrayToHexCoords()
 				client.write(`<room roomId="${roomId}">` +
 								`<data class="move\">` +
 									`<from x="${hexFrom.x}" y="${hexFrom.y}"/>` +

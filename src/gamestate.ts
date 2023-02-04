@@ -1,5 +1,6 @@
 import { Board, boardSize } from "./board"
 import { Cloneable } from "./deepcopy"
+import { Move } from "./move"
 import { Point } from "./point"
 
 export function otherPlayer(player: string) {
@@ -11,29 +12,29 @@ export function otherPlayer(player: string) {
         return undefined
 }
 
-export class GameState extends Cloneable {
+export class GameState {
     board: Board = new Board()
     turn: number = 0
+
     currentPlayer = ""
     myselfPlayer = ""
     startPlayer = ""
 
     constructor() {
-        super()
+        
     }
-
 
 
     // returns all possible moves
     getPossibleMoves() {
-        let re = []
+        let re: Move[] = []
 
         if (this.turn < 8) {
             for (let x = 0; x < boardSize; x++)
                 for (let y = 0; y < boardSize; y++) {
                     const curField = Number(this.board.fields[x][y])
                     if (Number.isInteger(curField) && curField == 1){
-                        re.push([null, new Point(x, y)])
+                        re.push(new Move(null, new Point(x, y)))
                     }
                 }
         } else {
@@ -46,7 +47,7 @@ export class GameState extends Cloneable {
                     curPos.addInP(this.getDirectionDisplacement(dir, curPos))
 
                     while (this.board.isInBoundsP(curPos) && this.board.isFreeP(curPos)){
-                        re.push([new Point(playerField.x, playerField.y), new Point(curPos.x, curPos.y)])
+                        re.push(new Move(new Point(playerField.x, playerField.y), new Point(curPos.x, curPos.y)))
                         curPos.addInP(this.getDirectionDisplacement(dir, curPos))
                     }
                 }
