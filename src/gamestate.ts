@@ -30,9 +30,11 @@ export class GameState {
 
             cpFields.forEach((playerField) => {
                 for (let dir = 0; dir < 6; dir++) {
+                    
                     let curPos = new Point(playerField.x, playerField.y)
                     curPos.addInP(this.getDirectionDisplacement(dir, curPos))
-                    while (this.board.isInBoundsP(curPos) && Number.isInteger(Number(this.board.get(curPos.x,curPos.y))) && Number(this.board.get(curPos.x,curPos.y)) != 0){
+
+                    while (this.board.isInBoundsP(curPos) && this.board.isFreeP(curPos)){
                         console.log(playerField.x + "|" + playerField.y + " " + dir + ": " + curPos + ", " + Number(this.board.get(curPos.x,curPos.y)) + ", " + this.board.get(curPos.x,curPos.y))
 
                         re.push([new Point(playerField.x, playerField.y), new Point(curPos.x, curPos.y)])

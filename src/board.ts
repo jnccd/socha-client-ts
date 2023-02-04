@@ -23,6 +23,22 @@ export class Board {
         return this.isInBounds(p.x, p.y);
     }
 
+    isFree(x: number, y: number) {
+        let n = Number(this.fields[x][y]);
+        return Number.isInteger(n) && n != 0
+    }
+    isFreeP(p: Point) {
+        return this.isFree(p.x, p.y)
+    }
+
+    isEmpty(x: number, y: number) {
+        let n = Number(this.fields[x][y]);
+        return Number.isInteger(n) && n == 0
+    }
+    isEmptyP(p: Point) {
+        return this.isEmpty(p.x, p.y)
+    }
+
     getAllFieldsFromPlayer(player: string) {
         let re = []
 
