@@ -4,7 +4,7 @@ import DOMParser from 'dom-parser';
 
 import { decideMove } from './logic'
 import { Point } from './point'
-import { GameState } from './gamestate';
+import { GameState, otherPlayer } from './gamestate';
 import { boardSize } from './board';
 
 let host = "127.0.0.1";
@@ -83,6 +83,12 @@ client.on('data', function(data) {
 	let domData = dom.getElementsByTagName('data')
 	if (domData != null && domData.length > 0) {
 		if (domData.at(0).getAttribute("class") == "moveRequest") {
+
+			if (currentState.turn == 0)
+				currentState.myselfPlayer = currentState.startPlayer
+			else if (currentState.turn == 1)
+				currentState.myselfPlayer = otherPlayer(currentState.startPlayer)
+			currentState.currentPlayer = currentState.myselfPlayer
 
 			let move = decideMove(currentState)
 
