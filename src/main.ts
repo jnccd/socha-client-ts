@@ -5,7 +5,7 @@ import { decideMove } from './logic.js'
 
 let host = "127.0.0.1";
 let port = 13050;
-let reservation = "";
+let reservation: string | null = null;
 let strategy = null;
 
 let logNetwork = true;
@@ -56,7 +56,7 @@ var client = new Socket();
 client.connect(port, host, function() {
 	console.log('Connected');
 
-	if (reservation == "") {
+	if (reservation == null) {
 		client.write(`<protocol><join gameType=\"swc_2023_penguins\" />`);
 	} else {
 		client.write(`<protocol><joinPrepared reservationCode=\"${reservation}\" />`);
