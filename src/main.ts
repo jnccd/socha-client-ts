@@ -144,6 +144,23 @@ client.on('data', function(data) {
 		}
 	}
 
+	let domWinner = dom.getElementsByTagName('winner')
+	if (domWinner.length > 0) {
+		let winner = domWinner[0].getAttribute("team")
+		console.log(`Team ${winner} won!\nCongratulations!\nIm gonna shut down now`);
+
+		client.destroy();
+		process.exit(0);
+	}
+
+	let domScores = dom.getElementsByTagName('scores')
+	if (domScores.length > 0) {
+		console.log(`A draw!\nCongratulations to both teams!\nIm gonna shut down now`);
+
+		client.destroy();
+		process.exit(0);
+	}
+
 	responseData = ""
 });
 
