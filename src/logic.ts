@@ -1,7 +1,7 @@
 import { GameState } from "./gamestate"
-import { main } from "./main"
+import main from "./main"
 
-export function decideMove(currentState: GameState) {
+function decideMove(currentState: GameState) {
 
     // Add your code here
 
@@ -9,4 +9,4 @@ export function decideMove(currentState: GameState) {
     return moves[Math.floor(Math.random() * moves.length)]
 }
 
-main()
+main(decideMove)

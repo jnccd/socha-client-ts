@@ -2,21 +2,20 @@ import { Socket } from 'net';
 import Enumerable from 'linq';
 import DOMParser from 'dom-parser';
 
-import { decideMove } from './logic'
-import { Point } from './point'
 import { GameState } from './gamestate';
 import { boardSize } from './board';
+import { Move } from './move';
 
 let host = "127.0.0.1";
 let port = 13050;
 let reservation: string | null = null;
 let strategy = null;
-let roomId = ""
-let currentState: GameState = new GameState()
+let roomId = "";
+let currentState: GameState = new GameState();
 
 let logNetwork = true;
 
-export function main() {
+export default function main(moveProvider: (g: GameState) => Move) {
 
 	// --- Arguments ---
 	let lastArg = "";
@@ -92,7 +91,7 @@ export function main() {
 					currentState.myselfPlayer = currentState.otherPlayer(currentState.startPlayer)
 				currentState.currentPlayer = currentState.myselfPlayer
 
-				let move = decideMove(currentState)
+				let move = moveProvider(currentState)
 
 				console.log("Chose move: ")
 				console.log(move)
