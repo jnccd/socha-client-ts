@@ -24,6 +24,23 @@ export class GameState {
         
     }
 
+    perform(m: Move): GameState {
+        let re = Cloneable.deepCopy(this)
+        
+        re.board.fields[m.to.x][m.to.y] = re.currentPlayer
+
+        if (m.from != null) {
+            re.board.fields[m.from.x][m.from.y] = "0"
+
+            let other = otherPlayer(re.currentPlayer)
+            if (this.canMove(other))
+                re.currentPlayer = other
+        }
+        
+        re.turn++
+
+        return re
+    }
 
     canMove(player: string) {
         let can = false
