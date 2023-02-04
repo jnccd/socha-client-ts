@@ -131,6 +131,12 @@ client.on('data', function(data) {
 		currentState.startPlayer = currentState.playerFromString(domStartTeam[0].innerHTML);
 	}
 
+	let domFishes = dom.getElementsByTagName('int')
+	if (domFishes.length > 1) {
+		currentState.onePlayer.fishes = Number(domFishes[0].innerHTML)
+		currentState.twoPlayer.fishes = Number(domFishes[1].innerHTML)
+	}
+
 	let domBoard = dom.getElementsByTagName('board')
 	if (domBoard.length > 0) {
 		

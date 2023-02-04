@@ -15,13 +15,12 @@ export class GameState {
     onePlayer: Player = new Player("ONE", 1, 0)
     twoPlayer: Player = new Player("TWO", 2, 0)
 
-    constructor() {
-        
-    }
+    constructor() { }
 
     perform(m: Move): GameState {
         let re = Cloneable.deepCopy(this)
         
+        this.currentPlayer.fishes += Number(re.board.fields[m.to.x][m.to.y])
         re.board.fields[m.to.x][m.to.y] = re.currentPlayer.identifier
 
         if (m.from != null) {
@@ -33,7 +32,6 @@ export class GameState {
         }
         
         re.turn++
-
         return re
     }
 
