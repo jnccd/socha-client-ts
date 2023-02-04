@@ -1,6 +1,15 @@
 import { Board, boardSize } from "./board"
 import { Point } from "./point"
 
+export function otherPlayer(player: string) {
+    if (player == "ONE")
+        return "TWO"
+    else if (player == "TWO")
+        return "ONE"
+    else
+        return undefined
+}
+
 export class GameState {
     board: Board = new Board()
     turn: number = 0
