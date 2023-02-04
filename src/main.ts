@@ -56,7 +56,7 @@ var client = new Socket();
 client.connect(port, host, function() {
 	console.log('Connected');
 
-	if (reservation == null) {
+	if (reservation == "") {
 		client.write(`<protocol><join gameType=\"swc_2023_penguins\" />`);
 	} else {
 		client.write(`<protocol><joinPrepared reservationCode=\"${reservation}\" />`);
