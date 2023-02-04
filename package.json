@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@types/dom-parser": "^0.1.1",
+    "@types/linq": "^2.2.33",
+    "@types/node": "^18.11.18",
+    "dom-parser": "^0.1.6",
+    "linq": "^3.2.4"
+  }
+}
