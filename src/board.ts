@@ -1,3 +1,4 @@
+import Enumerable from "linq";
 import { Point } from "./point"
 
 export const boardSize = 8
@@ -39,6 +40,18 @@ export class Board {
         return this.isEmpty(p.x, p.y)
     }
 
+    getNeighborFields(p: Point) {
+        let ps = Enumerable.range(0,6).select((x) => { return Board.getDirectionDisplacement(x,p) }).toArray()
+        let rs: Point[] = []
+
+        ps.forEach((p) => {
+            if (this.isInBoundsP(p))
+                rs.push(p)
+        })
+
+        return rs
+    }
+
     getAllFieldsFromPlayer(player: string) {
         let re = []
 
@@ -49,5 +62,13 @@ export class Board {
                 }
 
         return re
+    }
+
+    static getDirectionDisplacement(dir: number, pos: Point) {
+        if (pos.y % 2 == 0) {
+            return [ new Point(-1, -1), new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 1), new Point(-1, 0) ][dir]
+        } else {
+            return [ new Point(0, -1), new Point(1, -1), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(-1, 0) ][dir]
+        }
     }
 }
