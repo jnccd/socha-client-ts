@@ -1,7 +1,9 @@
 import { Socket } from 'net';
 import Enumerable from 'linq';
 import DOMParser from 'dom-parser';
+
 import { decideMove } from './logic'
+import { Point } from './point'
 
 let host = "127.0.0.1";
 let port = 13050;
@@ -150,30 +152,7 @@ client.on('close', function() {
 });
 
 // --- Game Logic ---
-export class Point {
-    x: number;
-    y: number;
 
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-	}
-
-	addInP(p: Point) {
-		this.x = p.x + this.x
-		this.y = p.y + this.y
-	}
-	add(p: Point) {
-		return new Point(p.x + this.x, p.y + this.y)
-	}
-
-	arrayToHexCoords() {
-		return new Point(this.x * 2 + (this.y % 2 == 1 ? 1 : 0), this.y)
-	}
-	hexToArrayCoords() {
-		return new Point(this.x / 2 - (this.y % 2 == 1 ? 1 : 0), this.y)
-	}
-}
 
 // returns all possible moves, requires turn number and 2D array board
 export function getPossibleMoves(turn: number, board: Board) {
