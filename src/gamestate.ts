@@ -18,30 +18,28 @@ export class GameState {
         console.log(this.turn + ": " + currentPlayer)
         if (this.turn < 8) {
             console.log(this.board)
-            for (var x = 0; x < boardSize; x++)
-                for (var y = 0; y < boardSize; y++) {
-            const curField = Number(this.board.fields[x][y])
+            for (let x = 0; x < boardSize; x++)
+                for (let y = 0; y < boardSize; y++) {
+                    const curField = Number(this.board.fields[x][y])
                     if (Number.isInteger(curField) && curField == 1){
                         re.push([null, new Point(x, y)])
                     }
                 }
         } else {
-            for (var x = 0; x < boardSize; x++)
-                for (var y = 0; y < boardSize; y++)
-                    if (this.board.get(x,y) == currentPlayer) {
+            let cpFields = this.board.getAllFieldsFromPlayer(currentPlayer);
 
-                        for (var dir = 0; dir < 6; dir++) {
-                            const curPos = new Point(x, y)
-                            curPos.addInP(this.getDirectionDisplacement(dir, curPos))
-                            while (this.board.isInBoundsP(curPos) && Number.isInteger(Number(this.board.get(curPos.x,curPos.y))) && Number(this.board.get(curPos.x,curPos.y)) != 0){
-                                console.log(x + "|" + y + " " + dir + ": " + curPos + ", " + Number(this.board.get(curPos.x,curPos.y)) + ", " + this.board.get(curPos.x,curPos.y))
+            cpFields.forEach((playerField) => {
+                for (let dir = 0; dir < 6; dir++) {
+                    let curPos = new Point(playerField.x, playerField.y)
+                    curPos.addInP(this.getDirectionDisplacement(dir, curPos))
+                    while (this.board.isInBoundsP(curPos) && Number.isInteger(Number(this.board.get(curPos.x,curPos.y))) && Number(this.board.get(curPos.x,curPos.y)) != 0){
+                        console.log(playerField.x + "|" + playerField.y + " " + dir + ": " + curPos + ", " + Number(this.board.get(curPos.x,curPos.y)) + ", " + this.board.get(curPos.x,curPos.y))
 
-                                re.push([new Point(x, y), new Point(curPos.x, curPos.y)])
-                                curPos.addInP(this.getDirectionDisplacement(dir, curPos))
-                            }
-                        }
-
+                        re.push([new Point(playerField.x, playerField.y), new Point(curPos.x, curPos.y)])
+                        curPos.addInP(this.getDirectionDisplacement(dir, curPos))
                     }
+                }
+            });
         }
 
         return re

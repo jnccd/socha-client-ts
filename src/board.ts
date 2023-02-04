@@ -7,7 +7,7 @@ export class Board {
 
     constructor() {
         this.fields = new Array(boardSize);
-		for(var i = 0; i < this.fields.length; i++){
+		for(let i = 0; i < this.fields.length; i++){
 			this.fields[i] = new Array(boardSize);
         }
     }
@@ -21,5 +21,17 @@ export class Board {
     }
     isInBoundsP(p: Point) {
         return this.isInBounds(p.x, p.y);
+    }
+
+    getAllFieldsFromPlayer(player: string) {
+        let re = []
+
+        for (let x = 0; x < boardSize; x++)
+            for (let y = 0; y < boardSize; y++)
+                if (this.fields[x][y] === player) {
+                    re.push(new Point(x, y))
+                }
+
+        return re
     }
 }
