@@ -21,8 +21,8 @@ To setup this project execute the following in the console:
 
 To build and run it write this:
 
-```tsc && node output/main.js```
+```tsc && node output/logic.js```
 
 If you wish to pass program arguments to the `node ` execution you can use `--` like so:
 
-```node output/main.js -- --help```
+```node output/logic.js -- --help```
