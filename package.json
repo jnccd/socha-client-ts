@@ -1,8 +1,9 @@
 {
-  "name": "socha",
+  "name": "socha23",
   "description": "Provides a client template for the software challenge 2023",
   "version": "1.0.0",
-  "main": "output/logic.js",
+  "main": "output/index.js",
+  "types": "output/index.d.ts",
   "files": [
     "output"
   ],
@@ -14,7 +15,12 @@
     "type": "git",
     "url": "https://github.com/jnccd/socha-client-ts.git"
   },
-  "keywords": ["socha", "software-challenge", "hey-danke-für-den-fisch", "typescript"],
+  "keywords": [
+    "socha",
+    "software-challenge",
+    "hey-danke-für-den-fisch",
+    "typescript"
+  ],
   "author": "dobiko",
   "license": "BSD-3-Clause",
   "bugs": {
@@ -26,5 +32,8 @@
     "@types/node": "^18.11.18",
     "dom-parser": "^0.1.6",
     "linq": "^3.2.4"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5"
   }
 }

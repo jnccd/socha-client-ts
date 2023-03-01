@@ -1,5 +1,5 @@
 import { GameState } from "./gamestate"
-import main from "./main"
+import { main } from "./main"
 
 function decideMove(currentState: GameState) {
 

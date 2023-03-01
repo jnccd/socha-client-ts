@@ -1,4 +1,5 @@
 output/*.*
+output/src/*.*
 package-lock.json
 
 # Logs

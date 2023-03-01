@@ -15,7 +15,7 @@ let currentState: GameState = new GameState();
 
 let logNetwork = true;
 
-export default function main(moveProvider: (g: GameState) => Move) {
+export function main(moveProvider: (g: GameState) => Move) {
 
 	// --- Arguments ---
 	let lastArg = "";
