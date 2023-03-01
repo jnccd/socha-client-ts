@@ -1,5 +1,8 @@
 # Typescript client for Software-Challenge Germany 2022/2023
 
+[![npm version](https://img.shields.io/npm/v/socha233)](https://www.npmjs.com/package/socha23)
+[![npm downloads](https://img.shields.io/npm/dt/socha23)](https://www.npmjs.com/package/socha23)
+[![npm types](https://img.shields.io/npm/types/socha23)](https://www.npmjs.com/package/socha23)
 [![Discord](https://img.shields.io/discord/233577109363097601?color=blue&label=Discord)](https://discord.gg/ARZamDptG5)
 [![Documentation](https://img.shields.io/badge/Software--Challenge%20-Documentation-%234299e1)](https://docs.software-challenge.de/)
 
